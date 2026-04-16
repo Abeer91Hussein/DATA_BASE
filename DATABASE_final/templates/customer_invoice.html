@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Invoice</title>
+
+<style>
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    font-family: "Times New Roman", serif;
+    background-image: url("{{ url_for('static', filename='1.jpg') }}");
+    background-size: cover;
+    background-position: center;
+    filter: brightness(0.9) contrast(1.1);
+}
+
+header {
+    background: rgba(0,0,0,0.6);
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header a {
+    color: white;
+    text-decoration: none;
+}
+
+.content {
+    margin-top: 60px;
+    text-align: center;
+}
+
+.box {
+    background: rgba(0,0,0,0.5);
+    display: inline-block;
+    padding: 30px 50px;
+    border-radius: 15px;
+    color: white;
+    min-width: 420px;
+}
+
+.invoice-header p {
+    margin: 5px 0;
+    font-size: 16px;
+}
+
+.invoice-items {
+    margin-top: 20px;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.invoice-items th, .invoice-items td {
+    padding: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.3);
+    text-align: left;
+}
+
+.invoice-items th {
+    background: rgba(255,255,255,0.1);
+}
+
+.total {
+    margin-top: 20px;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: right;
+}
+
+.back-btn {
+    background-color: #410a05;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 16px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h2>Invoice</h2>
+    <a href="{{ url_for('customer_portal') }}" class="back-btn">⬅ Back</a>
+</header>
+
+<div class="content">
+    <div class="box">
+
+        <h1>Invoice Details</h1>
+
+        <!-- Branch & Payment Info -->
+        <div class="invoice-header">
+            <p><strong>Branch Name:</strong> {{ branch_name }}</p>
+            <p><strong>Branch Location:</strong> {{ branch_location }}</p>
+            <p><strong>Payment Method:</strong> {{ payment_method }}</p>
+        </div>
+
+        <!-- Products Table -->
+        <table class="invoice-items">
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+            </tr>
+            {% for item in cart_items %}
+            <tr>
+                <td>{{ item.product_name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>${{ item.price }}</td>
+                <td>${{ item.total }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <!-- Total Price -->
+        <div class="total">
+            Total Price: ${{ total_price }}
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

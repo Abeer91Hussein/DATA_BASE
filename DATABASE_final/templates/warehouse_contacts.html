@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Branches Contacts</title>
+
+<style>
+body {
+    font-family: "Times New Roman", serif;
+    background: url("{{ url_for('static', filename='492005453_1078773277617540_8286173066551137313_n.jpg') }}") no-repeat center center fixed;
+    background-size: cover;
+    color: white;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 90%;
+    max-width: 1000px;
+    margin: 80px auto;
+    background: rgba(0,0,0,0.7); 
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+}
+
+h2 {
+    border-bottom: 2px solid #cabfc3;
+    padding-bottom: 10px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    padding: 12px;
+    border: 1px solid rgba(255,255,255,0.3);
+}
+
+th {
+    background: rgba(65,10,5,0.9);
+}
+
+.back-link {
+    display: inline-block;
+    margin-top: 20px;
+    color: #cabfc3;
+    text-decoration: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Other Warehouses & Managers</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Warehouse ID</th>
+                <th>Branch Name</th>
+                <th>Phone Number</th>
+                <th>Location</th>
+                <th>Manager Name</th>
+                <th>Manager Phone Number</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for w in warehouses %}
+            <tr>
+                <td>{{ w.warehouse_id }}</td>
+                <td>{{w.branch_name}}</td>
+                <td>{{ w.warehouse_PhoneNum }}</td>
+                <td>{{ w.warehouse_location }}</td>
+                <td>{{ w.manager_name }}</td>
+                <td>{{w.phone_num}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ url_for('warehouse_manager_dashboard') }}" class="back-link">
+        &larr; Back to Dashboard
+    </a>
+</div>
+
+</body>
+</html>

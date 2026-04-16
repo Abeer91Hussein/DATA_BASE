@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Invoice</title>
+<style>
+html, body { height: 100%; margin: 0; }
+body {
+    font-family: "Times New Roman", serif;
+    background-image: url("{{ url_for('static', filename='1.jpg') }}");
+    background-size: cover;
+    background-position: center;
+    filter: brightness(0.9) contrast(1.1);
+}
+header {
+    background: rgba(0,0,0,0.6);
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+header a { color: white; text-decoration: none; }
+.content { margin-top: 60px; text-align: center; }
+.box {
+    background: rgba(0,0,0,0.5);
+    display: inline-block;
+    padding: 30px 50px;
+    border-radius: 15px;
+    color: white;
+    min-width: 400px;
+}
+.cart-item { display: flex; justify-content: space-between; margin: 10px 0; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 10px; }
+.total { margin-top: 20px; font-size: 20px; font-weight: bold; }
+
+
+
+.back-btn {
+    display: inline-block;
+    margin-top: 20px;
+    background-color: #410a05;
+    color: white;
+    padding: 10px 25px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+.back-btn:hover {
+    transform: scale(1.05);
+}
+
+</style>
+</head>
+<body>
+
+<header>
+    <h2>Invoice</h2>
+    <a href="{{ url_for('customer_portal') }}" class="back-btn">⬅ Back</a>
+</header>
+
+<div class="content">
+    <div class="box">
+        <h1>Invoice Details</h1>
+
+        {% for item in cart_items %}
+        <div class="cart-item">
+            <span>
+                {{ item.product_name }} ({{ item.quantity }})
+                - ${{ item.total }}
+            </span>
+        </div>
+        {% endfor %}
+
+        <div class="total">
+            Total Price: ${{ total_price }}
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
+    

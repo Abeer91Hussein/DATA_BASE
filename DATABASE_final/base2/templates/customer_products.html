@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Products</title>
+
+<style>
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Times New Roman", serif;
+    background-image: url("{{ url_for('static', filename='1.jpg') }}");
+    background-size: cover;
+    background-position: center;
+    filter: brightness(0.9) contrast(1.1);
+}
+
+/* ===== HEADER ===== */
+header {
+    background: rgba(0,0,0,0.6);
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header a {
+    color: white;
+    text-decoration: none;
+    background-color: #410a05;
+    padding: 8px 15px;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+header a:hover {
+    background-color: #5c0f06;
+}
+
+/* ===== CONTENT ===== */
+.content {
+    margin-top: 60px;
+    text-align: center;
+}
+
+.box {
+    background: rgba(0,0,0,0.5);
+    display: inline-block;
+    padding: 30px 50px;
+    border-radius: 15px;
+    color: white;
+    min-width: 400px;
+}
+
+/* ===== PRODUCT ITEMS ===== */
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 0;
+    padding: 10px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+}
+
+.cart-item input[type="number"] {
+    width: 50px;
+    padding: 3px;
+    margin-right: 5px;
+    border-radius: 5px;
+    border: none;
+}
+
+.cart-item button {
+    background-color: #410a05;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.cart-item button:hover {
+    transform: scale(1.05);
+    background-color: #5c0f06;
+}
+</style>
+</head>
+
+<body>
+
+
+
+<header>
+    <h2>Products</h2>
+    <a href="{{ url_for('customer_portal') }}">⬅ Back</a>
+</header>
+
+<div class="content">
+    <div class="box">
+        <h1>Available Products</h1>
+
+        {% for product in products %}
+        <div class="cart-item">
+            <span>{{ product.product_name }} - ${{ product.price }}</span>
+
+            <form method="POST" action="{{ url_for('add_to_cart') }}">
+                <input type="hidden" name="product_id" value="{{ product.product_id }}">
+                <input type="number" name="quantity" value="1" min="1">
+                <button type="submit">Add to Cart</button>
+            </form>
+        </div>
+        {% endfor %}
+
+    </div>
+</div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

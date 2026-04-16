@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Purchase Orders - Warehouse</title>
+
+<style>
+html, body {
+    height:100%;
+    margin:0;
+    font-family:"Times New Roman", serif;
+}
+
+
+body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient( 135deg, #f5efe6 20%, /* بيج فاتح */ #6b2a2a 60%, /* أخضر زيتوني */ #491717 100% /* خمري غامق */ ); z-index: -2; }
+body .logo-bg {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 55vw;
+    max-width: 700px;
+    height: auto;
+    transform: translate(-50%, -50%);
+    opacity: 0.15;
+    z-index: -1;
+    pointer-events: none;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 55vw;
+    max-width: 700px;
+    height: 55vw;
+    max-height: 400px;
+
+    background-image: url("{{ url_for('static', filename='logo2.png') }}");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+
+    transform: translate(-50%, -50%);
+    opacity: 1;
+    z-index: -2;
+}
+
+
+
+.navbar{
+    background: rgba(73, 23, 23, 0.95);
+    padding: 15px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #5a1a1a;
+    border-radius: 6px;
+}
+
+
+.navbar h2 { margin:0; }
+
+.btn {
+    background:#410a05;
+    color:white;
+    padding:8px 16px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:16px;
+    transition:0.3s;
+}
+
+.btn:hover { background:#931342; }
+.supplier-used {
+    color: #3cff3c;
+}
+.legend {
+    margin-bottom:15px;
+    font-size:14px;
+}
+.legend span {
+    color:#3cff3c;
+    font-weight:bold;
+}
+
+
+.container {
+    padding:40px;
+    display:flex;
+    flex-direction:column;
+    gap:30px;
+}
+
+.card {
+    background:rgba(0,0,0,0.75);
+    padding:25px;
+    border-radius:15px;
+    color:white;
+}
+
+.card h2 {
+    margin-top:0;
+    border-bottom:2px solid #cabfc3;
+    padding-bottom:10px;
+}
+
+select {
+    padding:10px;
+    border-radius:6px;
+    border:1px solid #cabfc3;
+    background:rgba(255,255,255,0.1);
+    color:white;
+    font-size:16px;
+}
+
+table {
+    width:100%;
+    border-collapse:collapse;
+    margin-top:15px;
+}
+
+table th, table td {
+    padding:12px;
+    border:1px solid rgba(255,255,255,0.3);
+    text-align:left;
+}
+
+table th {
+    background:rgba(65,10,5,0.9);
+}
+
+.modal {
+    display:none;
+    position:fixed;
+    z-index:2000;
+    left:0; top:0;
+    width:100%; height:100%;
+    background:rgba(0,0,0,0.7);
+}
+
+.modal-content {
+    background:rgba(0,0,0,0.9);
+    margin:8% auto;
+    padding:30px;
+    width:55%;
+    border-radius:12px;
+    color:white;
+}
+
+.close {
+    float:right;
+    font-size:28px;
+    cursor:pointer;
+    color:#aaa;
+}
+
+.close:hover { color:white; }
+</style>
+</head>
+
+<body>
+
+<div class="navbar">
+    <h2> Warehouse Purchase Orders</h2>
+    <a href="{{ url_for('warehouse_manager_dashboard') }}">
+        <button class="btn">Back to Dashboard</button>
+    </a>
+</div>
+
+<div class="container">
+
+    <!-- Analytics Card -->
+    <div class="card">
+        <h2> Purchase Orders Summary</h2>
+
+        <label>Select Period:</label><br><br>
+<select id="periodSelect" onchange="filterOrders()">
+    <option value="day"   {{ 'selected' if selected_period == 'day' }}>Per Day</option>
+    <option value="month" {{ 'selected' if selected_period == 'month' }}>Per Month</option>
+    <option value="year"  {{ 'selected' if selected_period == 'year' }}>Per Year</option>
+</select>
+
+
+        
+    </div>
+
+    <!-- Purchase Orders History -->
+    <div class="card">
+        <h2> Purchase Orders History</h2>
+
+        {% if orders %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Date</th>
+                    <th>Supplier</th>
+                    <th>Total Cost ($)</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for o in orders %}
+                <tr>
+                    <td>#{{ o.order_id }}</td>
+                    <td>{{ o.order_date.strftime('%Y-%m-%d') }}</td>
+                    <td>{{ o.supplier_name }}</td>
+                    <td>{{ o.total_cost }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p>No purchase orders found.</p>
+        {% endif %}
+    </div>
+
+    <!-- Supplier Info -->
+    <div class="card">
+        <h2> Suppliers</h2>
+        <button class="btn" onclick="openSupplierModal()">View All Suppliers</button>
+    </div>
+
+</div>
+<div id="supplierModal" class="modal">
+<div class="modal-content">
+    <span class="close" onclick="closeSupplierModal()">&times;</span>
+    <h2>Supplier Information</h2>
+
+    <div class="legend">
+        <span> Green</span> = Supplier you dealt with before
+    </div>
+
+    {% for s in suppliers %}
+        <p class="{{ 'supplier-used' if s.supplier_id in used_suppliers }}">
+            <strong>{{ s.supplier_name }}</strong><br>
+                {{ s.phone_num or 'N/A' }}<br>
+                {{ s.email or 'N/A' }}
+        </p>
+        <hr>
+    {% endfor %}
+</div>
+</div>
+
+
+<script>
+function filterOrders() {
+    const period = document.getElementById('periodSelect').value;
+
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+
+    let url = "?period=" + period;
+
+    if (period === "day") {
+        url += "&date=" + `${yyyy}-${mm}-${dd}`;
+    }
+    else if (period === "month") {
+        url += "&year=" + yyyy + "&month=" + mm;
+    }
+    else if (period === "year") {
+        url += "&year=" + yyyy;
+    }
+
+    window.location.href = url;
+}
+
+function openSupplierModal(){
+    document.getElementById('supplierModal').style.display='block';
+}
+function closeSupplierModal(){
+    document.getElementById('supplierModal').style.display='none';
+}
+window.onclick = function(e){
+    if(e.target.classList.contains('modal')){
+        e.target.style.display='none';
+    }
+}
+</script>
+
+
+</body>
+</html>

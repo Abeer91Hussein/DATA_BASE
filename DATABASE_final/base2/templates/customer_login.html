@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Customer Dashboard</title>
+
+<style>
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    font-family: "Times New Roman", serif;
+    background-image: url("{{ url_for('static', filename='1.jpg') }}");
+    background-size: cover;
+    background-position: center;
+}
+
+header {
+    background: rgba(0,0,0,0.6);
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header a {
+    color: white;
+    text-decoration: none;
+    background-color: #410a05;
+    padding: 8px 15px;
+    border-radius: 8px;
+}
+
+.dashboard {
+    text-align: center;
+    margin-top: 80px;
+}
+
+.dashboard button {
+    width: 220px;
+    padding: 15px;
+    margin: 10px;
+    font-size: 18px;
+    background-color: #410a05;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h2>Welcome Customer</h2>
+    <a href="{{ url_for('customer_logout') }}">Logout</a>
+</header>
+
+<div class="dashboard">
+    <h1>Customer Dashboard</h1>
+
+    <button onclick="location.href='{{ url_for('customer_products') }}'">
+         Products
+    </button>
+
+    <button onclick="location.href='{{ url_for('customer_cart') }}'">
+         Cart
+    </button>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Branch Employee Dashboard</title>
+
+<style>
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Times New Roman", serif;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Background */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("{{ url_for('static', filename='492005453_1078773277617540_8286173066551137313_n.jpg') }}");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: brightness(0.8) contrast(1.1);
+    z-index: -1;
+}
+
+/* NAVBAR */
+.navbar {
+    width: 100%;
+    background-color: rgba(0,0,0,0.7);
+    padding: 15px 40px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    box-sizing: border-box;
+}
+
+.navbar h2 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.navbar a {
+    text-decoration: none;
+}
+
+.navbar .btn {
+    background-color: #410a05;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: "Times New Roman", serif;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+.navbar .btn:hover {
+    background-color: #931342;
+    transform: scale(1.05);
+}
+
+/* PAGE CONTENT */
+.container {
+    padding-top: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    padding-bottom: 50px;
+}
+
+/* CARD */
+.card {
+    background: rgba(0,0,0,0.65);
+    border-radius: 15px;
+    padding: 25px;
+    width: 90%;
+    max-width: 1000px;
+    color: white;
+}
+
+.card h2 {
+    margin-top: 0;
+    border-bottom: 2px solid #cabfc3;
+    padding-bottom: 10px;
+}
+
+/* QUICK ACTIONS CARD */
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.action-box {
+    background: rgba(65,10,5,0.5);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.action-box:hover {
+    background: rgba(65,10,5,0.8);
+    transform: translateY(-5px);
+}
+
+.action-box a {
+    text-decoration: none;
+    color: white;
+    display: block;
+}
+
+.action-box h3 {
+    margin: 0 0 10px 0;
+    font-size: 20px;
+}
+
+.action-box p {
+    margin: 0;
+    font-size: 14px;
+    color: #cabfc3;
+}
+
+.action-icon {
+    font-size: 48px;
+    margin-bottom: 10px;
+}
+
+/* TABLE */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+table th, table td {
+    padding: 12px;
+    border: 1px solid rgba(255,255,255,0.3);
+    text-align: left;
+}
+
+table th {
+    background: rgba(65,10,5,0.9);
+}
+
+/* ALERT */
+.alert {
+    background: rgba(208, 205, 205, 0.6);
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.low-stock-row {
+    background: rgba(255, 193, 7, 0.2);
+}
+
+.btn-request {
+    background-color: #28a745;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 14px;
+}
+
+.btn-request:hover {
+    background-color: #218838;
+}
+
+input[type="number"] {
+    width: 70px;
+    padding: 5px;
+    background: rgba(255,255,255,0.1);
+    color: white;
+    border: 1px solid #cabfc3;
+    border-radius: 5px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <h2>Branch Employee Dashboard</h2>
+    <div>
+        <a href="{{ url_for('branch_employee_account') }}">
+            <button class="btn">Account</button>
+        </a>
+        <a href="{{ url_for('employee_logout') }}">
+            <button class="btn">Logout</button>
+        </a>
+    </div>
+</div>
+
+<!-- CONTENT -->
+<div class="container">
+
+    <!-- Employee Information -->
+    <div class="card">
+        <h2>Employee Information</h2>
+        <p><strong>Name:</strong> {{ employee.person_name }}</p>
+        <p><strong>Employee ID:</strong> {{ employee.formatted_id }}</p>
+        <p><strong>Category:</strong> {{ employee.category }}</p>
+        <p><strong>Salary:</strong> {{ employee.salary }} $</p>
+        <p><strong>Phone:</strong> {{ employee.phone_num }}</p>
+        <p><strong>Address:</strong> {{ employee.address }}</p>
+    </div>
+
+    <!-- Branch Info -->
+    <div class="card">
+        <h2>Branch Information</h2>
+        <p><strong>Branch Name:</strong> {{ branch.branch_name }}</p>
+        <p><strong>Branch Location:</strong> {{ branch.branch_location }}</p>
+        <p><strong>Branch ID:</strong> {{ branch.branch_id }}</p>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="card">
+        <h2>Quick Actions</h2>
+        <div class="quick-actions">
+            <div class="action-box">
+                <a href="{{ url_for('branch_customer_sales') }}">
+                    <div class="action-icon">                                                       <img src="https://img.icons8.com/?size=100&id=bl4fOWP6vAGs&format=png&color=000000" alt="Sales">
+</div>
+                    <h3>Customer Sales Report</h3>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Products -->
+    <div class="card">
+        <h2>Branch Products</h2>
+
+        {% if branch_products %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Price</th>
+                    <th>Available Quantity</th>
+                    <th>Reorder Level</th>
+                    <th>Unit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in branch_products %}
+                <tr {% if product.available_quantity <= product.reOrder_level %}class="low-stock-row"{% endif %}>
+                    <td>{{ product.product_name }}</td>
+                    <td>${{ product.price }}</td>
+                    <td>{{ product.available_quantity }}</td>
+                    <td>{{ product.reOrder_level }}</td>
+                    <td>{{ product.product_unit }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p>No products found for this branch.</p>
+        {% endif %}
+    </div>
+
+    <!-- Low Stock Alert -->
+    {% if low_stock_products %}
+    <div class="card">
+        <h2> Low Stock Alert</h2>
+        <p style="color: #fabd05e8;">The following products are under reorder level, and need re-filling:</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Current Quantity</th>
+                    <th>Reorder Level</th>
+                    <th>Suggested Quantity</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in low_stock_products %}
+                <tr style="background: rgba(255, 193, 7, 0.3);">
+                    <td>{{ product.product_name }}</td>
+                    <td style="color: #dc3545; font-weight: bold;">{{ product.available_quantity }}</td>
+                    <td>{{ product.reOrder_level }}</td>
+                    <td>
+                        <form method="POST" action="{{ url_for('request_reorder') }}" style="display:inline;">
+                            <input type="hidden" name="product_id" value="{{ product.product_id }}">
+                            <input type="number" name="quantity" min="1" value="{{ product.reOrder_level * 2 }}" required>
+                    </td>
+                    <td>
+                            <button type="submit" class="btn-request">Request Reorder</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <!-- Notifications -->
+    <div class="card">
+        <h2> Notifications</h2>
+
+        {% if notifications %}
+            {% for notif in notifications %}
+            <div class="alert"
+                 {% if not notif.is_read %}
+                 style="background: rgba(65,10,5,0.4);"
+                 {% endif %}>
+                <strong>{{ notif.notification_type.replace('_', ' ').title() }}</strong><br>
+                {{ notif.message }}<br>
+                <small style="color: #cabfc3;">{{ notif.created_date.strftime('%Y-%m-%d %H:%M') }}</small>
+                {% if not notif.is_read %}
+                    <a href="{{ url_for('mark_notification_read', notification_id=notif.notification_id) }}" 
+                       style="color:#cabfc3; float:right; text-decoration:underline;">Mark as read</a>
+                {% endif %}
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>No notifications at this time.</p>
+        {% endif %}
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cart</title>
+
+<style>
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    font-family: "Times New Roman", serif;
+    background-image: url("{{ url_for('static', filename='1.jpg') }}");
+    background-size: cover;
+    background-position: center;
+    filter: brightness(0.9) contrast(1.1);
+}
+
+header {
+    background: rgba(0,0,0,0.6);
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header a {
+    color: white;
+    text-decoration: none;
+}
+
+.content {
+    margin-top: 60px;
+    text-align: center;
+}
+
+.box {
+    background: rgba(0,0,0,0.5);
+    display: inline-block;
+    padding: 30px 50px;
+    border-radius: 15px;
+    color: white;
+    min-width: 420px;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 0;
+    padding: 10px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+}
+
+.cart-item button {
+    background: #410a05;
+    color: white;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.cart-item button:hover {
+    transform: scale(1.05);
+}
+
+.total {
+    margin-top: 20px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.back-btn {
+    background-color: #410a05;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 16px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <form method="GET" action="{{ url_for('customer_cart') }}" style="margin-bottom:15px;">
+    <label><b>View Cart By Branch:</b></label><br>
+
+    <select name="branch_id" style="padding:8px;border-radius:8px;">
+        {% for b in branches %}
+            <option value="{{ b.branch_id }}"
+                {% if current_branch == b.branch_id|string %}selected{% endif %}>
+                {{ b.branch_name }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <button type="submit"
+            style="margin-left:10px;padding:8px 15px;
+                   background:#410a05;color:white;border:none;
+                   border-radius:8px;">
+        Show
+    </button>
+</form>
+
+    <h2>Cart</h2>
+    <a href="{{ url_for('customer_portal') }}" class="back-btn">⬅ Back</a>
+</header>
+
+<div class="content">
+    <div class="box">
+        <h1>Your Cart</h1>
+
+        {% if cart_items %}
+            {% for item in cart_items %}
+            <div class="cart-item">
+                <span>
+                    {{ item.product_name }} ({{ item.quantity }}) - ${{ item.total }}
+                </span>
+
+                <form action="{{ url_for('remove_from_cart') }}" method="POST" style="margin:0;">
+                    <input type="hidden" name="product_id" value="{{ item.product_id }}">
+                    <button type="submit">Remove</button>
+                </form>
+            </div>
+            {% endfor %}
+
+            <div class="total">
+                Total Price: ${{ total_price }}
+            </div>
+
+            <!-- Checkout Form -->
+            <form action="{{ url_for('checkout') }}" method="POST" style="margin-top:20px;">
+<p style="margin-bottom:12px;">
+    <b>Branch:</b> {{ session.selected_branch }}
+</p>
+
+
+                <!-- Payment Method -->
+                <div style="margin-bottom:15px;">
+                    <label><b>Payment Method:</b></label><br>
+                    <select name="payment_method" required
+                            style="padding:8px;border-radius:8px;width:100%;">
+                        <option value="">-- Select Payment Method --</option>
+                        <option value="CASH/ONARRIVAL">Cash on Arrival</option>
+                        <option value="PAYPAL">PayPal</option>
+                        <option value="VISA">Visa</option>
+                        <option value="DEBITCARD">Debit Card</option>
+                    </select>
+                </div>
+
+                <button type="submit"
+                        style="background:#410a05;color:white;
+                               padding:10px 20px;border:none;
+                               border-radius:10px;">
+                    Checkout
+                </button>
+            </form>
+
+        {% else %}
+            <p>Your cart is empty.</p>
+        {% endif %}
+
+        <br>
+        <a href="{{ url_for('customer_products') }}"
+           style="color:white;background:#410a05;
+                  padding:10px 20px;border-radius:10px;
+                  text-decoration:none;">
+           Add More Products
+        </a>
+
+    </div>
+</div>
+
+</body>
+</html>

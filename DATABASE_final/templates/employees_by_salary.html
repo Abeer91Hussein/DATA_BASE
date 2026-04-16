@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Employees Sorted by Salary</title>
+
+<style>
+body{
+    margin:0;
+    font-family:"Times New Roman", serif;
+    background:#111;
+    color:white;
+}
+
+.navbar{
+    background:rgba(0,0,0,0.8);
+    padding:15px 40px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.navbar a{
+    color:#cabfc3;
+    text-decoration:none;
+}
+
+.container{
+    width:85%;
+    margin:40px auto;
+}
+
+h2{
+    margin-bottom:20px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th, td{
+    padding:12px;
+    text-align:left;
+    border-bottom:1px solid #333;
+}
+
+th{
+    background:#1c1c1c;
+}
+
+.highest-salary{
+    background:#2a1f0f;
+    color:#ffd369;
+    font-weight:bold;
+}
+
+.badge{
+    background:#ffd369;
+    color:#000;
+    padding:3px 8px;
+    border-radius:6px;
+    font-size:12px;
+    margin-left:6px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="navbar">
+    <h3>Employees</h3>
+    <a href="{{ url_for('branch_employees_page') }}">⬅ Back</a>
+</div>
+
+<div class="container">
+    <h2>Employees Sorted by Salary (Highest First)</h2>
+
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Salary</th>
+        </tr>
+
+        {% for emp in employees %}
+        <tr class="{% if loop.first %}highest-salary{% endif %}">
+            <td>
+                {{ emp.person_name }}
+                {% if loop.first %}
+                    <span class="badge">Highest</span>
+                {% endif %}
+            </td>
+            <td>{{ emp.phone_num }}</td>
+            <td>{{ emp.salary }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+</body>
+</html>

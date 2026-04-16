@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Saleh Khalaf</title>
+<style>
+body {
+    font-family: "Times New Roman", serif;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url("{{ url_for('static', filename='492005453_1078773277617540_8286173066551137313_n.jpg') }}");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: brightness(0.8) contrast(1.1);
+}
+.navbar {
+    width: 100%;
+    background-color: rgba(0,0,0,0.6);
+    padding: 15px 0;
+    text-align: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+.navbar h2 {
+    color: white;
+    margin: 0;
+    font-family: "Times New Roman", serif;
+    font-size: 26px;
+}
+.overlay {
+    background: rgba(0, 0, 0, 0.4);
+    padding: 35px;
+    border-radius: 10px;
+    text-align: center;
+    width: 300px;
+    margin-top: 100px;
+}
+.overlay a {
+    text-decoration: none;
+}
+h1 {
+    color: white;
+    margin-bottom: 25px;
+    font-size: 30px;
+}
+.btn {
+    display: block;
+    width: 100%;
+    margin: 10px 0;
+    padding: 12px;
+    background-color: #410a05;
+    color: white;
+    font-size: 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+    font-family: "Times New Roman", serif;
+}
+.btn:hover {
+    background-color: #931342;
+    transform: scale(1.03);
+}
+</style>
+</head>
+
+<body>
+
+<div class="navbar">
+    <h2>Welcome to Saleh Khalaf</h2>
+</div>
+
+<div class="overlay">
+    <h1>Select Your Role</h1>
+    <a href="{{ url_for('customer') }}"><button class="btn">Customer</button></a>
+    <a href="{{ url_for('staff') }}"><button class="btn">Saleh Khalaf Staff</button></a>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Branch Reports</title>
+<style>
+html, body { 
+    height: 100%; 
+    margin: 0; 
+    padding: 0; }
+
+body { font-family: "Times New Roman", serif; 
+position: relative; 
+overflow-x: hidden; 
+}
+
+body::before {
+    content: "";
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+
+    background-image: url("{{ url_for('static', filename='492005453_1078773277617540_8286173066551137313_n.jpg') }}");
+    background-size: cover; background-position: center; background-repeat: no-repeat;
+    filter: brightness(0.8) contrast(1.1); z-index: -1;
+}
+.navbar { 
+    width:100%; background-color: rgba(0,0,0,0.7); 
+    padding:15px 40px; position:fixed; top:0; left:0;
+     display:flex; justify-content:space-between; 
+     align-items:center; color:white; z-index:1000; box-shadow:0 2px 10px rgba(0,0,0,0.5);
+    }
+
+.navbar h2{ margin:0; font-size:24px;}
+
+.navbar .btn{ background-color:#410a05; color:white; padding:8px 16px; border:none; border-radius:8px; cursor:pointer; font-family:"Times New Roman", serif; font-size:16px; transition:0.3s; margin-left:10px;}
+.navbar .btn:hover{ background-color:#931342; transform: scale(1.05);}
+
+.container { padding-top:100px; 
+    display:flex; 
+    flex-direction:column; 
+    align-items:center; 
+    gap:30px; 
+    padding-bottom:50px;}
+
+.card{ background: rgba(0,0,0,0.65); 
+    border-radius:15px; 
+    padding:25px; 
+    width:90%; 
+    max-width:1000px; 
+    color:white;
+}
+.card h2{ margin-top:0; 
+    border-bottom:2px solid #cabfc3;
+     padding-bottom:10px;
+    }
+    
+table{ width:100%; border-collapse:collapse; margin-top:15px;}
+table th, table td{ padding:12px; border:1px solid rgba(255,255,255,0.3); text-align:left;}
+table th{ background: rgba(65,10,5,0.9);}
+select{ margin:5px 10px 15px 0; padding:5px 10px; border-radius:5px;}
+</style>
+</head>
+<body>
+
+
+<div class="navbar">
+    <h2>Branch Reports</h2>
+    <div>
+        <a href="{{ url_for('branch_manager_dashboard') }}"><button class="btn">Dashboard</button></a>
+        <a href="{{ url_for('manager_logout') }}"><button class="btn">Logout</button></a>
+    </div>
+</div>
+
+
+<div class="container">
+
+
+    <!-- Employees Count -->
+    <div class="card">
+        <h2>Employees Count per Branch</h2>
+        <table>
+            <thead><tr><th>Branch ID</th><th>Branch Name</th><th>Location</th><th>Employee Count</th></tr></thead>
+            <tbody>
+                {% for b in employees_count %}
+                <tr><td>{{ b.branch_id }}</td><td>{{ b.branch_name }}</td><td>{{ b.branch_location }}</td><td>{{ b.employee_count }}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+    <!-- Total Sales -->
+    <div class="card">
+        <h2>Total Sales per Branch</h2>
+        <table>
+            <thead><tr><th>Branch ID</th><th>Branch Name</th><th>Location</th><th>Total Sales ($)</th></tr></thead>
+            <tbody>
+                {% for b in sales_per_branch %}
+                <tr><td>{{ b.branch_id }}</td><td>{{ b.branch_name }}</td><td>{{ b.branch_location }}</td><td>{{ b.total_sales }}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+    <!-- Branches in City -->
+    <div class="card">
+        <h2>Branches in {{ city }} with Total Invoices and Sales</h2>
+        <table>
+            <thead><tr><th>Branch ID</th><th>Branch Name</th><th>Location</th><th>Total Invoices</th><th>Total Sales ($)</th></tr></thead>
+            <tbody>
+                {% for b in branches_city %}
+                <tr><td>{{ b.branch_id }}</td><td>{{ b.branch_name }}</td><td>{{ b.branch_location }}</td><td>{{ b.total_invoices }}</td><td>{{ b.total_sales }}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+    <!-- Top Branch -->
+    <div class="card">
+        <h2>Top Branch by Customers and Purchases</h2>
+        {% if top_branch %}
+        <table>
+            <thead><tr><th>Branch ID</th><th>Branch Name</th><th>Location</th><th>Total Customers</th><th>Total Purchases ($)</th></tr></thead>
+            <tbody>
+                <tr><td>{{ top_branch.branch_id }}</td><td>{{ top_branch.branch_name }}</td><td>{{ top_branch.branch_location }}</td><td>{{ top_branch.total_customers }}</td><td>{{ top_branch.total_purchases }}</td></tr>
+            </tbody>
+        </table>
+        {% else %}<p>No data found.</p>{% endif %}
+    </div>
+
+
+    <!-- Sales Summary -->
+    <div class="card">
+        <h2>Sales Summary</h2>
+        <form method="get" action="{{ url_for('branch_reports') }}">
+            <label for="branch_id">Select Branch:</label>
+            <select name="branch_id" id="branch_id" onchange="this.form.submit()">
+                <option value="all" {% if selected_branch=='all' %}selected{% endif %}>All Branches</option>
+                {% for b in all_branches %}
+                <option value="{{ b.branch_id }}" {% if selected_branch==b.branch_id|string %}selected{% endif %}>{{ b.branch_name }} - {{ b.branch_location }}</option>
+                {% endfor %}
+            </select>
+            <label for="period">Select Period:</label>
+            <select name="period" id="period" onchange="this.form.submit()">
+                <option value="daily" {% if period=='daily' %}selected{% endif %}>Daily</option>
+                <option value="monthly" {% if period=='monthly' %}selected{% endif %}>Monthly</option>
+                <option value="yearly" {% if period=='yearly' %}selected{% endif %}>Yearly</option>
+            </select>
+        </form>
+
+
+        <p><strong>Total Sales ({{ period|capitalize }}):</strong> ${{ period_sales }}</p>
+        {% if best_product %}<p>Best Selling Product: {{ best_product.product_name }} (Sold: {{ best_product.total_sold }})</p>{% endif %}
+        {% if worst_product %}<p>Worst Selling Product: {{ worst_product.product_name }} (Sold: {{ worst_product.total_sold }})</p>{% endif %}
+    </div>
+
+
+    <!-- Products per Category by Supplier -->
+    <div class="card">
+        <h2>Total Products per Category by Supplier</h2>
+        <form method="get" action="{{ url_for('branch_reports') }}">
+            <label for="branch_category">Select Branch:</label>
+            <select name="branch_category" id="branch_category" onchange="this.form.submit()">
+                <option value="all" {% if branch_for_category=='all' %}selected{% endif %}>All Branches</option>
+                {% for b in all_branches_category %}
+                <option value="{{ b.branch_id }}" {% if branch_for_category==b.branch_id|string %}selected{% endif %}>{{ b.branch_name }}</option>
+                {% endfor %}
+            </select>
+        </form>
+        <table>
+            <thead><tr><th>Category Name</th><th>Supplier Name</th><th>Total Products</th></tr></thead>
+            <tbody>
+                {% for row in products_per_category %}
+                <tr><td>{{ row.category_name }}</td><td>{{ row.supplier_name }}</td><td>{{ row.total_products }}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+</div>
+</body>
+</html>

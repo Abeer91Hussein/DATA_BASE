@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Add Employee</title>
+
+<style>
+body{
+    margin:0;
+    font-family:"Times New Roman", serif;
+    background:#111;
+    color:white;
+}
+.navbar{
+    background:rgba(0,0,0,0.8);
+    padding:15px 40px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+.navbar a{
+    color:#cabfc3;
+    text-decoration:none;
+    margin-left:20px;
+}
+.container{
+    width:420px;
+    margin:60px auto;
+    background:rgba(0,0,0,0.7);
+    padding:30px;
+    border-radius:10px;
+}
+input, button{
+    width:100%;
+    padding:10px;
+    margin-top:10px;
+    background:rgba(255,255,255,0.1);
+    border:1px solid #cabfc3;
+    color:white;
+    border-radius:6px;
+}
+button{ cursor:pointer; }
+.btn-check{ background:#17a2b8; }
+.btn-add{ background:#28a745; }
+.message{ margin-top:10px; }
+</style>
+</head>
+
+<body>
+
+<div class="navbar">
+    <h3>Add Employee</h3>
+    <div>
+        <a href="{{ url_for('branch_employees_page') }}">Back</a>
+        <a href="{{ url_for('manager_logout') }}">Logout</a>
+    </div>
+</div>
+
+<div class="container">
+
+<form method="POST" action="{{ url_for('add_employee') }}">
+
+    <!-- PERSON ID -->
+    <label>Person ID</label>
+    <input type="number" id="person_id" name="person_id" required>
+
+    <button type="button" class="btn-check" onclick="checkPersonId()">
+        Check Person ID
+    </button>
+
+    <div id="check-result" class="message"></div>
+
+    <hr>
+
+    <!-- In the form, change the employee_id input to show preview only -->
+<label>Employee ID (Preview)</label>
+<input type="text" id="employee_id" name="employee_id_preview" readonly>
+<small style="color: #888;">Actual ID will be assigned automatically</small>
+    <input type="text" name="person_name" placeholder="Full Name" required>
+    <input type="text" name="phone_num" placeholder="Phone Number" required>
+    <input type="text" name="address" placeholder="Address" required>
+    <input type="number" name="salary" placeholder="Salary" required>
+    <input type="password" name="password" placeholder="Password" required>
+
+    <button type="submit" id="submitBtn" class="btn-add" disabled>
+        Add Employee
+    </button>
+
+</form>
+
+</div>
+
+<script>
+function checkPersonId(){
+    const pid = document.getElementById("person_id").value;
+    const result = document.getElementById("check-result");
+
+    if(!pid){
+        result.innerHTML = "<span style='color:red'>Enter Person ID</span>";
+        return;
+    }
+
+    fetch("/check_person_id",{
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body:JSON.stringify({ person_id: pid })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.status === "error"){
+            result.innerHTML = `<span style="color:red">${data.message}</span>`;
+            document.getElementById("submitBtn").disabled = true;
+        }else{
+            result.innerHTML = `<span style="color:lightgreen">${data.message}</span>`;
+            generateEmployeeId();
+        }
+    });
+}
+
+function generateEmployeeId(){
+    fetch("/generate_employee_id")
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("employee_id").value = data.employee_id;
+        document.getElementById("submitBtn").disabled = false;
+    });
+}
+</script>
+
+</body>
+</html>

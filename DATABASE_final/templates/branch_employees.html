@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Branch Employees</title>
+
+<style>
+
+
+body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient( 135deg, #f5efe6 20%, /* بيج فاتح */ #6b2a2a 60%, /* أخضر زيتوني */ #491717 100% /* خمري غامق */ ); z-index: -2; }
+body .logo-bg {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 55vw;
+    max-width: 700px;
+    height: auto;
+    transform: translate(-50%, -50%);
+    opacity: 0.15;
+    z-index: -1;
+    pointer-events: none;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 55vw;
+    max-width: 700px;
+    height: 55vw;
+    max-height: 400px;
+
+    background-image: url("{{ url_for('static', filename='logo2.png') }}");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+
+    transform: translate(-50%, -50%);
+    opacity: 1;
+    z-index: -2;
+}
+
+
+.navbar{
+    background: rgba(73, 23, 23, 0.95);
+    padding: 15px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #5a1a1a;
+    border-radius: 6px;
+}
+
+.navbar h2{ margin:0; }
+.navbar a{
+    color:#cabfc3;
+    text-decoration:none;
+    margin-left:20px;
+}
+.container{
+    width:90%;
+    margin:40px auto;
+}
+
+
+
+
+tbody tr td:first-child, thead tr th:first-child {
+    text-align: center;
+}
+
+
+table{
+    width: 100%;
+    border-collapse: collapse;
+    background-color: rgba(92, 58, 58, 0.85); 
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+th, td{
+    padding: 14px 12px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    color: #fff;
+}
+
+th{
+    background-color: rgba(57, 17, 17, 0.95); 
+    font-size: 16px;
+}
+
+tr:nth-child(even){
+    background-color: rgba(255, 255, 255, 0.05); 
+}
+
+tr:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+
+
+.btn {
+    background:#410a05;
+    color:white;
+    padding:8px 16px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:16px;
+    transition:0.3s;
+}
+
+.btn:hover { background:#931342; }
+.btn-add{ background:#28a745; color:white; }
+.btn-delete{ background:#dc3545; color:white; }
+.btn-sort{ background:#17a2b8; color:white; }
+
+.footer-actions{
+    margin-top:20px;
+    display:flex;
+    justify-content:space-between;
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <h2>Branch Employees</h2>
+    <div>
+        <a href="{{ url_for('branch_manager_dashboard') }}">Back to Dashboard</a>
+        <a href="{{ url_for('manager_logout') }}">Logout</a>
+    </div>
+</div>
+
+<div class="container">
+
+<!-- ACTION BUTTONS -->
+<div style="margin-bottom:20px; display:flex; gap:10px;">
+    <a href="{{ url_for('employees_sorted_by_salary') }}">
+        <button class="btn btn-sort">Sort by Salary ↓</button>
+    </a>
+
+    <a href="{{ url_for('add_employee_page') }}">
+        <button class="btn btn-add">+ Add Employee</button>
+    </a>
+</div>
+
+<!-- EMPLOYEES TABLE -->
+<table>
+<thead>
+<tr>
+    <th><input type="checkbox" id="select-all"></th>
+    <th>Employee ID</th>
+    <th>Person ID</th>
+    <th>Name</th>
+    <th>Phone</th>
+    <th>Category</th>
+    <th>Address</th>
+    <th>Salary</th>
+</tr>
+</thead>
+
+<tbody>
+{% for emp in employees %}
+<tr>
+    <td>
+        <input type="checkbox" class="emp-check" value="{{ emp.employee_id }}">
+    </td>
+    <td>{{ emp.formatted_id }}</td>
+    <td>{{ emp.person_id }}</td>
+    <td>{{ emp.person_name }}</td>
+    <td>{{ emp.phone_num }}</td>
+    <td>{{ emp.category }}</td>
+    <td>{{ emp.address }}</td>
+    <td>{{ emp.salary }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+<!-- DELETE -->
+<div class="footer-actions">
+    <button class="btn btn-delete" onclick="confirmDelete()">
+        Delete Selected Employees
+    </button>
+</div>
+
+</div>
+
+<script>
+// Select all
+document.getElementById('select-all').addEventListener('change', function() {
+    document.querySelectorAll('.emp-check').forEach(cb => cb.checked = this.checked);
+});
+
+// Delete selected
+function confirmDelete(){
+    const checked = document.querySelectorAll('.emp-check:checked');
+
+    if(checked.length === 0){
+        alert("Please select at least one employee");
+        return;
+    }
+
+    if(!confirm(`Are you sure you want to delete ${checked.length} employee(s)?`)){
+        return;
+    }
+
+    const ids = Array.from(checked).map(c => c.value);
+
+    fetch("{{ url_for('delete_employees') }}", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ employees: ids })
+    })
+    .then(res => {
+        if(!res.ok) throw new Error("Delete failed");
+        location.reload();
+    })
+    .catch(err => alert(err.message));
+}
+</script>
+
+</body>
+</html>

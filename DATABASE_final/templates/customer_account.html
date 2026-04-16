@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Customer Account</title>
+
+<style>
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    font-family: "Times New Roman", serif;
+    background-image: url("{{ url_for('static', filename='1.jpg') }}");
+    background-size: cover;
+    background-position: center;
+    filter: brightness(0.9) contrast(1.1);
+}
+
+header {
+    background: rgba(0,0,0,0.6);
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header a {
+    color: white;
+    text-decoration: none;
+}
+
+.content {
+    margin-top: 60px;
+    text-align: center;
+}
+
+.box {
+    background: rgba(0,0,0,0.5);
+    display: inline-block;
+    padding: 30px 50px;
+    border-radius: 15px;
+    color: white;
+    min-width: 500px;
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+.customer-info p {
+    margin: 8px 0;
+    font-size: 16px;
+}
+
+.invoice {
+    background: rgba(255,255,255,0.1);
+    padding: 12px 15px;
+    margin: 10px 0;
+    border-radius: 10px;
+    text-align: left;
+}
+
+.invoice a {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.back-btn {
+    background-color: #410a05;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 16px;
+    margin-bottom: 15px;
+    display: inline-block;
+}
+</style>
+</head>
+
+<body>
+
+<header style="display: flex; justify-content: space-between; align-items: center; padding: 10px;">
+    <h2>Welcome Customer</h2>
+    <div>
+        <a href="{{ url_for('customer_logout') }}" class="back-btn" style="margin-right: 10px;">Logout</a>
+        <a href="{{ url_for('customer_portal') }}" class="back-btn">Dashboard</a>
+    </div>
+</header>    
+
+<div class="content">
+    <div class="box">
+        <h1>Welcome, {{ customer_name }}</h1>
+
+        <div class="customer-info">
+            <p><strong>Customer ID:</strong> {{ customer_id }}</p>
+            <p><strong>Phone:</strong> {{ phone }}</p>
+            <p><strong>Address:</strong> {{ address }}</p>
+        </div>
+
+        <hr style="margin:20px 0; border-color: white;">
+
+        <h2>Your Invoices</h2>
+
+        {% if invoices %}
+            {% for inv in invoices %}
+            <div class="invoice">
+                <p><strong>Invoice ID:</strong> {{ inv.invoice_id }}</p>
+                <p><strong>Date:</strong> {{ inv.invoice_date }}</p>
+                <p><strong>Total:</strong> ${{ inv.total_amount }}</p>
+                <p><strong>Payment Method:</strong> {{ inv.payment_method }}</p>
+                <p><strong>Branch:</strong> {{ inv.branch_name }} - {{ inv.branch_location }}</p>
+                <a href="{{ url_for('customer_invoice', invoice_id=inv.invoice_id) }}">View Details</a>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>You have no invoices yet.</p>
+        {% endif %}
+
+        <br>
+        <a href="{{ url_for('customer_products') }}" class="back-btn">Shop More Products</a>
+    </div>
+</div>
+
+</body>
+</html>

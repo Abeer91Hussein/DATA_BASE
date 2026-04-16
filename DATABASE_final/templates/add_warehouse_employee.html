@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Add Warehouse Employee</title>
+
+<style>
+body{
+    margin:0;
+    font-family:"Times New Roman", serif;
+    background:#111;
+    color:white;
+}
+body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient( 135deg, #f5efe6 20%, /* بيج فاتح */ #6b2a2a 60%, /* أخضر زيتوني */ #491717 100% /* خمري غامق */ ); z-index: -2; }
+body .logo-bg {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 55vw;
+    max-width: 700px;
+    height: auto;
+    transform: translate(-50%, -50%);
+    opacity: 0.15;
+    z-index: -1;
+    pointer-events: none;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 55vw;
+    max-width: 700px;
+    height: 55vw;
+    max-height: 400px;
+
+    background-image: url("{{ url_for('static', filename='logo2.png') }}");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+
+    transform: translate(-50%, -50%);
+    opacity: 1;
+    z-index: -2;
+}
+
+
+
+.navbar{
+    background: rgba(73, 23, 23, 0.95);
+    padding: 15px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #5a1a1a;
+    border-radius: 6px;
+}
+
+
+.navbar h2 { margin:0; }
+
+.btn {
+    background:#410a05;
+    color:white;
+    padding:8px 16px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:16px;
+    transition:0.3s;
+}
+
+.btn:hover { background:#931342; }
+.navbar a{
+    color:#cabfc3;
+    text-decoration:none;
+    margin-left:20px;
+}.container{
+    width:410px;
+    margin:60px auto;
+    background:rgba(0,0,0,0.7);
+    padding:30px;
+    border-radius:10px;
+
+    display: flex;           
+    flex-direction: column;  
+    align-items: center;     
+}
+
+input,
+button{
+    width: 90%;         
+    padding: 10px;
+    margin-top: 10px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid #cabfc3;
+    color: white;
+    border-radius: 6px;
+    text-align: center;
+    box-sizing: border-box; 
+}
+
+label{
+    width: 90%;             
+    margin-top:10px;
+    text-align: left;        
+    font-weight: bold;
+}
+
+button{ cursor:pointer; }
+.btn-check{ background:#17a2b8; }
+.btn-add{ background:#28a745; }
+.message{ margin-top:10px; }
+</style>
+</head>
+
+<body>
+
+<div class="navbar">
+    <h3>Add Warehouse Employee</h3>
+    <div>
+        <a href="{{ url_for('warehouse_employees_page') }}">Back</a>
+        <a href="{{ url_for('manager_logout') }}">Logout</a>
+    </div>
+</div>
+
+<div class="container">
+
+<form method="POST" action="{{ url_for('add_warehouse_employee') }}">
+
+    <!-- PERSON ID -->
+    <label>Person ID</label>
+    <input type="number" id="person_id" name="person_id" required>
+
+    <button type="button" class="btn-check" onclick="checkPersonId()">
+        Check Person ID
+    </button>
+
+    <div id="check-result" class="message"></div>
+
+    <hr>
+
+    <!-- AUTO GENERATED EMPLOYEE ID -->
+    <label>Employee ID</label>
+    <input type="text" id="employee_id" name="employee_id" readonly>
+
+    <!-- Employee Information -->
+    <input type="text" name="person_name" placeholder="Full Name" required>
+    <input type="text" name="phone_num" placeholder="Phone Number" required>
+    <input type="text" name="address" placeholder="Address" required>
+    <input type="number" name="salary" placeholder="Salary" required>
+    <input type="password" name="password" placeholder="Password" required>
+
+    <button type="submit" id="submitBtn" class="btn-add" disabled>
+        Add Employee
+    </button>
+
+</form>
+
+</div>
+
+<script>
+function checkPersonId(){
+    const pid = document.getElementById("person_id").value;
+    const result = document.getElementById("check-result");
+
+    if(!pid){
+        result.innerHTML = "<span style='color:red'>Enter Person ID</span>";
+        return;
+    }
+
+    fetch("/check_person_id",{
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body:JSON.stringify({ person_id: pid })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.status === "error"){
+            result.innerHTML = `<span style="color:red">${data.message}</span>`;
+            document.getElementById("submitBtn").disabled = true;
+        }else{
+            result.innerHTML = `<span style="color:lightgreen">${data.message}</span>`;
+            generateEmployeeId();
+        }
+    });
+}
+
+function generateEmployeeId(){
+    fetch("/generate_warehouse_employee_id")
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("employee_id").value = data.employee_id;
+        document.getElementById("submitBtn").disabled = false;
+    });
+}
+</script>
+
+</body>
+</html>

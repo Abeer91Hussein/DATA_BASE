@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Customer Sign Up</title>
+
+<style>
+body {
+    font-family: "Times New Roman", serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-image: url("{{ url_for('static', filename='492005453_1078773277617540_8286173066551137313_n.jpg') }}");
+    background-size: cover;
+    background-position: center;
+    filter: brightness(0.8) contrast(1.1);
+}
+
+.signup-box {
+    background: rgba(0,0,0,0.6);
+    padding: 30px;
+    border-radius: 10px;
+    color: white;
+    width: 320px;
+    text-align: center;
+}
+
+.signup-box input {
+    width: 90%;
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 5px;
+    border: none;
+}
+
+.signup-box button {
+    width: 95%;
+    padding: 10px;
+    background-color: #410a05;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+}
+
+.success-message {
+    color: #28a745;
+    background: rgba(40, 167, 69, 0.2);
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px 0;
+}
+</style>
+</head>
+
+<body>
+
+<div class="signup-box">
+    <h2>Customer Sign Up</h2>
+
+    <form method="POST">
+        <!-- REMOVED customer_id input - it will auto-generate -->
+        <input type="text" name="name" placeholder="Full Name" required>
+        <input type="number" name="phone" placeholder="Phone Number" required>
+        <input type="text" name="address" placeholder="Address" required>
+        <input type="password" name="password" placeholder="Password" required>
+
+        <button type="submit">Create Account</button>
+    </form>
+
+    {% if success %}
+        <p class="success-message">{{ success }}</p>
+        <a href="{{ url_for('customer') }}" style="color: #28a745;">Go to Login</a>
+    {% endif %}
+
+    {% if error %}
+        <p style="color:red;">{{ error }}</p>
+    {% endif %}
+</div>
+
+</body>
+</html>

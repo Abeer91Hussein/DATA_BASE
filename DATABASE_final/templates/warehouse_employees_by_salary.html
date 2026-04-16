@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Warehouse Employees Sorted by Salary</title>
+
+<style>
+
+body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient( 135deg, #f5efe6 20%, /* بيج فاتح */ #6b2a2a 60%, /* أخضر زيتوني */ #491717 100% /* خمري غامق */ ); z-index: -2; }
+body .logo-bg {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 55vw;
+    max-width: 700px;
+    height: auto;
+    transform: translate(-50%, -50%);
+    opacity: 0.15;
+    z-index: -1;
+    pointer-events: none;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 55vw;
+    max-width: 700px;
+    height: 55vw;
+    max-height: 400px;
+
+    background-image: url("{{ url_for('static', filename='logo2.png') }}");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+
+    transform: translate(-50%, -50%);
+    opacity: 1;
+    z-index: -2;
+}
+
+.navbar{
+    background: rgba(73, 23, 23, 0.95);
+    padding: 15px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #5a1a1a;
+    border-radius: 6px;
+}
+
+.navbar a{
+    color: #ffd369;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.container{
+    width: 85%;
+    margin: 40px auto;
+}
+
+h2{
+    margin-bottom: 20px;
+    color: #ffd369;
+    text-shadow: 1px 1px 2px #000;
+}
+
+
+table{
+    width: 100%;
+    border-collapse: collapse;
+    background-color: rgba(92, 58, 58, 0.85); 
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+th, td{
+    padding: 14px 12px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    color: #fff;
+}
+
+th{
+    background-color: rgba(57, 17, 17, 0.95); 
+    font-size: 16px;
+}
+
+tr:nth-child(even){
+    background-color: rgba(255, 255, 255, 0.05); 
+}
+
+tr:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.highest-salary{
+    background-color: rgba(90, 26, 26, 0.9);
+    color: #ffd369;
+    font-weight: bold;
+}
+
+.badge{
+    background-color: #ffd369;
+    color: #491717;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    margin-left: 6px;
+    font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="navbar">
+    <h3>Warehouse Employees</h3>
+    <a href="{{ url_for('warehouse_employees_page') }}">⬅ Back</a>
+</div>
+
+<div class="container">
+    <h2>Warehouse Employees Sorted by Salary (Highest First)</h2>
+
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Salary</th>
+        </tr>
+
+        {% for emp in employees %}
+        <tr class="{% if loop.first %}highest-salary{% endif %}">
+            <td>
+                {{ emp.person_name }}
+                {% if loop.first %}
+                    <span class="badge">Highest</span>
+                {% endif %}
+            </td>
+            <td>{{ emp.phone_num }}</td>
+            <td>{{ emp.salary }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+</body>
+</html>

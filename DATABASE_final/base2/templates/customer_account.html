@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Customer Account</title>
+
+<style>
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Times New Roman", serif;
+    background-image: url("{{ url_for('static', filename='1.jpg') }}");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: brightness(0.9) contrast(1.1);
+}
+
+header.header {
+    background: rgba(0,0,0,0.6);
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header h2 { margin: 0; }
+
+.header a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    background-color: #410a05;
+    padding: 8px 15px;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+.header a:hover { background-color: #410a05; }
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 50px;
+}
+
+.box {
+    background: rgba(0,0,0,0.5);
+    padding: 30px 50px;
+    border-radius: 15px;
+    color: white;
+    text-align: center;
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+    <h2>Customer Account</h2>
+    <div style="display:flex; align-items:center; gap:10px;">
+        <a href="{{ url_for('customer_portal') }}">Dashboard</a>
+        <a href="{{ url_for('customer_logout') }}">Logout</a>
+    </div>
+</header>
+
+<div class="container">
+    <div class="box">
+        <h1>Welcome to Your Account</h1>
+        <p>Here you can manage your profile, view personal details, and more.</p>
+    </div>
+</div>
+
+</body>
+</html>

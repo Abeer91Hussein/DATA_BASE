@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Warehouse Manager Dashboard</title>
+<style>
+html, body { height:100%; margin:0; padding:0; font-family:"Times New Roman", serif; }
+
+body::before { content:""; position:fixed; top:0; left:0; width:100%; height:100%;
+    background-image: url("{{ url_for('static', filename='492005453_1078773277617540_8286173066551137313_n.jpg') }}");
+
+    background-size: cover;
+     background-position: center; 
+    filter: brightness(0.85); 
+    z-index:-1; }
+
+
+.navbar { width:100%; background-color: rgba(0,0,0,0.7); padding:15px 40px; position:fixed; top:0; left:0;
+    display:flex; justify-content: space-between; align-items:center; color:white; z-index:1000; }
+.navbar h2 { margin:0; font-size:24px; }
+
+
+.navbar .btn { background-color:#410a05; color:white; padding:8px 16px; 
+    border:none;
+    border-radius:8px; 
+    cursor:pointer; 
+    font-size:16px; 
+    transition:0.3s; }
+.navbar .btn:hover { background-color:#931342; }
+
+
+.container { padding-top:100px; 
+    display:flex; 
+    flex-direction:column; 
+    align-items:center; 
+    gap:30px; 
+    padding-bottom:50px; 
+}
+
+.card {
+     background: rgba(0,0,0,0.65); 
+    border-radius:15px; 
+    padding:25px;
+     width:90%;
+     max-width:1000px; 
+    color:white; 
+}
+
+.card h2 { margin-top:0; 
+    border-bottom:2px solid #cabfc3; 
+    padding-bottom:10px; 
+}
+
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.action-box {
+    background: rgba(65,10,5,0.5);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.action-box:hover {
+    background: rgba(65,10,5,0.8);
+    transform: translateY(-5px);
+}
+
+.action-box a {
+    text-decoration: none;
+    color: white;
+    display: block;
+}
+
+.action-box h3 {
+    margin: 0 0 10px 0;
+    font-size: 20px;
+}
+
+.action-box p {
+    margin: 0;
+    font-size: 14px;
+    color: #cabfc3;
+}
+
+.action-icon {
+    font-size: 48px;
+    margin-bottom: 10px;
+}
+table { width:100%; border-collapse:collapse; margin-top:15px; }
+table th, table td { padding:12px; border:1px solid rgba(255,255,255,0.3); text-align:left; }
+table th { background: rgba(65,10,5,0.9); }
+.low-stock-row { background: rgba(255, 193, 7, 0.2); }
+.alert { background: rgba(208, 205, 205, 0.6); padding: 10px; margin: 8px 0; border-radius: 8px; font-size: 16px; }
+.btn-approve { background-color: #28a745; color: white; padding: 6px 12px; border: none; border-radius: 5px; cursor: pointer; transition: 0.3s; margin-right: 5px; }
+.btn-approve:hover { background-color: #218838; }
+.btn-reject { background-color: #dc3545; color: white; padding: 6px 12px; border: none; border-radius: 5px; cursor: pointer; transition: 0.3s; }
+.btn-reject:hover { background-color: #c82333; }
+.modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); }
+.modal-content { 
+    background-color: rgba(0,0,0,0.9);
+     margin: 10% auto; padding: 30px; 
+     border: 1px solid #888; border-radius: 10px;
+      width: 50%; color: white; }
+
+.close { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+.close:hover { color: white; }
+input[type="number"], select, textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    background: rgba(255,255,255,0.1);
+    color: white;
+    border-radius: 5px;
+    border: 1px solid #cabfc3;
+}
+</style>
+</head>
+
+<body>
+<div class="navbar">
+    <h2>Warehouse Manager Dashboard</h2>
+    <div>
+        <a href="{{ url_for('warehouse_contacts') }}">
+            <button class="btn">Contacts</button>
+        </a>
+        <a href="{{ url_for('warehouse_manager_account') }}"><button class="btn">Account</button></a>
+        <a href="{{ url_for('manager_logout') }}"><button class="btn">Logout</button></a>
+    </div>
+</div>
+
+<div class="container">
+
+    <div class="card">
+        <h2>Warehouse Information</h2>
+        <p><strong>Warehouse ID:</strong> {{ warehouse_id }}</p>
+        <p><strong>Location:</strong> {{ warehouse_location }}</p>
+        <p><strong>Total Employees:</strong> {{ total_employees }}</p>
+        <p><strong>Capacity:</strong> {{ warehouse_capacity }}</p>
+<p><strong>Current Filling:</strong> {{ current_filling }}</p>
+<p>
+    <strong>Status:</strong>
+        {{ warehouse_status }}
+</p>
+
+    </div>
+
+    
+    <!-- Quick Actions -->
+    <div class="card">
+        <h2> Quick Access</h2>
+        <div class="quick-actions">
+            <div class="action-box">
+                <a href="{{ url_for('warehouse_purchase_orders') }}">
+                    <div class="action-icon">
+                    <img src="https://img.icons8.com/?size=100&id=bl4fOWP6vAGs&format=png&color=000000" alt="Sales">
+
+                    </div>
+                    <h3>Purchase Orders Analytics</h3>
+                </a>
+            </div>
+            <div class="action-box">
+                
+                <a href="{{ url_for('warehouse_employees_page') }}">
+                    <div class="action-icon">
+                            <img src="https://img.icons8.com/?size=100&id=SAnw4el5ZsN8&format=png&color=000000" alt="Sales">
+
+                    </div>
+                    <h3>Manage Employees</h3>
+                </a>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Warehouse Products -->
+    <div class="card">
+        <h2>Warehouse Products</h2>
+        {% if warehouse_products %}
+        <table>
+            <thead>
+                <tr><th>Product ID</th><th>Name</th><th>Available Quantity</th><th>Reorder Level</th></tr>
+            </thead>
+            <tbody>
+                {% for prod in warehouse_products %}
+                <tr {% if prod.available_quantity <= prod.reOrder_level %}class="low-stock-row"{% endif %}>
+                    <td>{{ prod.product_id }}</td>
+                    <td>{{ prod.product_name }}</td>
+                    <td>{{ prod.available_quantity }}</td>
+                    <td>{{ prod.reOrder_level }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}<p>No products in warehouse.</p>{% endif %}
+    </div>
+
+    <!-- Requests Requiring Purchase Decision -->
+    <div class="card">
+        <h2> Order Requests To Purchase </h2>
+        <p style="color: #ff9800;">These requests require purchasing from suppliers because warehouse products are not enough.</p>
+        {% if pending_purchase_requests %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Request ID</th>
+                    <th>Branch</th>
+                    <th>Product</th>
+                    <th>Quantity Needed</th>
+                    <th>Current Stock</th>
+                    <th>Shortage</th>
+                    <th>Notes</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for req in pending_purchase_requests %}
+                <tr class="low-stock-row">
+                    <td>#{{ req.request_id }}</td>
+                    <td>{{ req.branch_name }}</td>
+                    <td>{{ req.product_name }}</td>
+                    <td>{{ req.request_quantity }}</td>
+                    <td style="color:#dc3545; font-weight:bold;">{{ req.warehouse_qty or 0 }}</td>
+                    <td style="color:#dc3545;">{{ req.request_quantity - (req.warehouse_qty or 0) }}</td>
+                    <td><small>{{ req.notes or '-' }}</small></td>
+                    <td>
+                        <button class="btn-approve" onclick="openPurchaseModal('{{ req.request_id }}','{{ req.product_name }}','{{ req.reqeust_quantity }}','{{ req.product_id }}')">Create Purchase Order</button>
+                        <button class="btn-reject" onclick="openRejectPurchaseModal('{{ req.request_id }}','{{ req.product_name }}')">Reject</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}<p>No purchase decisions needed at this time.</p>{% endif %}
+    </div>
+
+   
+<!-- Supplier Info Box  -->
+    <div class="card">
+        <h2>Supplier Info</h2>
+        <button class="btn" onclick="toggleSupplierInfo()" style="margin-bottom:15px;">Show Supplier Info</button>
+
+
+        <div id="supplierInfoContent" style="display:none;">
+
+
+            <!--  Top Supplier -->
+            <div style="margin-top:15px;">
+                <h3>Top Supplier (Most Products)</h3>
+                {% if top_supplier %}
+                    <p><strong>{{ top_supplier.supplier_name }}</strong> provides the most products: {{ top_supplier.total_products }}</p>
+                {% else %}
+                    <p>No supplier data available.</p>
+                {% endif %}
+            </div>
+
+
+            <!--  Products per Supplier -->
+            <div style="margin-top:15px;">
+                <h3>Products Supplied by Each Supplier</h3>
+                {% if suppliers_products %}
+                <table>
+                    <thead>
+                        <tr><th>Supplier Name</th><th>Total Products</th><th>Product Names</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for sp in suppliers_products %}
+                        <tr>
+                            <td>{{ sp.supplier_name }}</td>
+                            <td>{{ sp.total_products }}</td>
+                            <td>{{ sp.product_names }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                    <p>No supplier-product data available.</p>
+                {% endif %}
+            </div>
+
+
+            <!--  total quantity supplied per warehouse -->
+            <div style="margin-top:15px;">
+                <h3>Total Quantity Supplied per Warehouse</h3>
+                {% if supplier_to_warehouse %}
+                <table>
+                    <thead>
+                        <tr><th>Supplier Name</th><th>Warehouse ID</th><th>Warehouse Location</th><th>Total Quantity Supplied</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for sq in supplier_to_warehouse %}
+                        <tr>
+                            <td>{{ sq.supplier_name }}</td>
+                            <td>{{ sq.warehouse_id }}</td>
+                            <td>{{ sq.warehouse_location }}</td>
+                            <td>{{ sq.total_quantity_supplied }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                    <p>No supplied quantity data available.</p>
+                {% endif %}
+            </div>
+
+
+        </div>
+    </div>
+
+    <!-- notifications -->
+    <div class="card">
+        <h2> Notifications</h2>
+        {% if notifications %}
+            {% for notif in notifications %}
+<div class="alert"
+     {% if not notif.is_read %}
+     style="background: rgba(65,10,5,0.4);"
+     {% endif %}>
+                    <strong>{{ notif.notification_type.replace('_', ' ').title() }}</strong><br>
+                    {{ notif.message }}<br>
+                    <small style="color: #cabfc3;">{{ notif.created_date.strftime('%Y-%m-%d %H:%M') }}</small>
+                    {% if not notif.is_read %}
+                        <a href="{{ url_for('mark_notification_read', notification_id=notif.notification_id) }}" 
+                           style="color:#cabfc3; float:right; text-decoration:underline;">Mark as read</a>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No notifications.</p>
+        {% endif %}
+    </div>
+
+</div>
+
+<!-- Purchase Order Modal -->
+<div id="purchaseModal" class="modal">
+<div class="modal-content">
+    <span class="close" onclick="closePurchaseModal()">&times;</span>
+    <h2>Create Purchase Order</h2>
+    <form method="post" action="{{ url_for('warehouse_manager_handle_request') }}">
+        <input type="hidden" name="request_id" id="purchase_request_id">
+        <input type="hidden" name="action" value="purchase">
+        
+        <p><strong>Product:</strong> <span id="purchase_product"></span></p>
+        <p><strong>Quantity Needed:</strong> <span id="purchase_quantity"></span></p>
+        
+        <label>Select Supplier:</label><br>
+        <select name="supplier_id" required>
+            <option value="">-- Choose Supplier --</option>
+            {% for supplier in suppliers %}
+            <option value="{{ supplier.supplier_id }}">{{ supplier.supplier_name }}</option>
+            {% endfor %}
+        </select><br>
+        
+        <label>Product Amount :</label><br>
+        <input type="number" name="reqeust_quantity" step="0.01" min="0.01" required placeholder="Enter total cost"><br>
+        
+        <button type="submit" class="btn-approve" style="padding:10px 20px; margin-top:10px; width:auto;">Create Purchase Order</button>
+    </form>
+</div>
+</div>
+
+<!-- Reject Purchase Modal -->
+<div id="rejectPurchaseModal" class="modal">
+<div class="modal-content">
+    <span class="close" onclick="closeRejectPurchaseModal()">&times;</span>
+    <h2>Reject Purchase Request</h2>
+    <form method="post" action="{{ url_for('warehouse_manager_handle_request') }}">
+        <input type="hidden" name="request_id" id="reject_purchase_request_id">
+        <input type="hidden" name="action" value="reject">
+        
+        <p><strong>Product:</strong> <span id="reject_purchase_product"></span></p>
+        
+        <label>Reason for Rejection:</label><br>
+        <textarea name="notes" rows="4" required placeholder="Explain why this purchase cannot be made..."></textarea><br>
+        
+        <button type="submit" class="btn-reject" style="padding:10px 20px; margin-top:10px; width:auto;">Reject Request</button>
+    </form>
+</div>
+</div>
+
+<script>
+function openPurchaseModal(requestId, productName, quantity, productId) {
+    document.getElementById('purchase_request_id').value = requestId;
+    document.getElementById('purchase_product').textContent = productName;
+    document.getElementById('purchase_quantity').textContent = quantity;
+    document.getElementById('purchaseModal').style.display = 'block';
+}
+function closePurchaseModal() {
+    document.getElementById('purchaseModal').style.display = 'none';
+}
+function openRejectPurchaseModal(requestId, productName) {
+    document.getElementById('reject_purchase_request_id').value = requestId;
+    document.getElementById('reject_purchase_product').textContent = productName;
+    document.getElementById('rejectPurchaseModal').style.display = 'block';
+}
+function closeRejectPurchaseModal() {
+    document.getElementById('rejectPurchaseModal').style.display = 'none';
+}
+window.onclick = function(event) {
+    if (event.target.classList.contains('modal')) {
+        event.target.style.display = 'none';
+    }
+}
+
+
+
+function toggleSupplierInfo() {
+    const content = document.getElementById('supplierInfoContent');
+    if (content.style.display === "none") {
+        content.style.display = "block";
+    } else {
+        content.style.display = "none";
+    }
+}
+window.onclick = function(event) {
+    if (event.target.classList.contains('modal')) {
+        event.target.style.display = 'none';
+    }
+}
+
+</script>
+
+</body>
+</html>
